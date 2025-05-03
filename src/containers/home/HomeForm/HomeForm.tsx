@@ -1,6 +1,6 @@
 import { TextInput } from '@/components/TextInput'
 import React from 'react'
-import { useHomeContext } from './HomeContext';
+import { useHomeContext } from '../HomeContext';
 import { DownloadPdfButton } from './DownloadPdfButton';
 import { PreviewPdfButton } from './PreviewPdfButton';
 

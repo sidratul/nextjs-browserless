@@ -1,24 +1,24 @@
 import { Card } from '@/components/Card'
 import React, { useRef, useState } from 'react'
 import { HomeForm } from './HomeForm'
-import { FileIcon } from 'lucide-react';
 import { HomeContext } from './HomeContext';
 import { getPdfBlob } from '@/services';
 import { z } from 'zod';
-import { PdfViewer } from './PdfViewer';
+import { PdfContent } from './PdfContent';
 
 export const HomeContainer = () => {
   const [error, setError] = useState('');
-  const [hasPreviewed, setHasPreviewed] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
   const inputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
-  const previewRef = useRef<HTMLIFrameElement>({} as HTMLIFrameElement);
 
   const downloadedFile = {
     url: '',
     blob: new Blob(),
   }
 
-  const downloadPdf = () => {
+  const getUrl = () => {
+    setError('');
+    
     // validate
     const url = inputRef.current?.value.toString();
     const { data, error } = z.string({ message: "url cannot be empty"}).url({message: "Invalid url"}).safeParse(url);
@@ -27,25 +27,22 @@ export const HomeContainer = () => {
       throw new Error(error.issues[0].message);
     }
 
+    return data;
+  }
+
+  const downloadPdf = (url: string) => {
+    setError('');
     // if similar to prev url, return prev blob
     if(url === downloadedFile.url) {
-      return Promise.resolve({
-        blob: downloadedFile.blob!,
-        url: url!,
-      });
+      return Promise.resolve(downloadedFile.blob);
     }
 
-    const validUrl = data!;
-    
     // request pdf
-    return getPdfBlob(validUrl)
+    return getPdfBlob(url)
       .then( blob => {
-        downloadedFile.url = validUrl;
+        downloadedFile.url = url;
         downloadedFile.blob = blob;
-        return {
-          blob,
-          url: url!,
-        };
+        return blob;
       })
       .catch(err => {
         setError(err.message);
@@ -56,10 +53,12 @@ export const HomeContainer = () => {
   return (
     <HomeContext.Provider
       value={{
+        setError,
+        getUrl,
         downloadPdf,
         inputRef,
-        setHasPreviewed,
-        previewRef,
+        previewUrl,
+        setPreviewUrl
       }}
     >
       <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -68,28 +67,18 @@ export const HomeContainer = () => {
             <h1 className="text-3xl font-bold text-gray-900">PDF Viewer</h1>
             <p className="text-gray-500 mt-2">Enter a URL to view and download PDF documents</p>
           </header>
-          <Card className="p-6">
+          
+          <Card className="p-6 bg">
             <HomeForm/>
           </Card>
+          
           {
             error && (
-              <div className="rounded-lg border p-2 text-center text-red-500 capitalize">{error}</div>
+              <div className="shadow-sm rounded-lg border border-gray-200 p-2 text-center text-red-500 capitalize bg-background">{error}</div>
             )
           }
           
-          {hasPreviewed ? (
-            <PdfViewer/>
-          ) : (
-            <div className="bg-white border rounded-lg shadow-sm p-4 h-[500px] flex flex-col items-center justify-center">
-              <div className="text-center">
-                <FileIcon size={64} className="mx-auto text-gray-300 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No PDF Selected</h3>
-                <p className="text-gray-500 max-w-md">
-                  Enter a URL in the field above and click &quot;View PDF&quot; to display the document here.
-                </p>
-              </div>
-            </div>
-          )}
+          <PdfContent/>
         </div>
       </div>
     </HomeContext.Provider>

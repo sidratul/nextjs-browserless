@@ -1,19 +1,17 @@
 import { Button } from '@/components/Button'
 import React, { useState } from 'react'
-import { useHomeContext } from './HomeContext';
+import { useHomeContext } from '../HomeContext';
 import { Eye } from 'lucide-react';
 
 export const PreviewPdfButton = () => {
-  const { downloadPdf, setHasPreviewed, previewRef } = useHomeContext();
+  const { getUrl, setPreviewUrl } = useHomeContext();
   const [loading, setLoading] = useState(false);
 
   const handleDisplayPdf = async () => {
-    setHasPreviewed(true);
     setLoading(true);
     try{
-      const { blob } = await downloadPdf();
-      const pdfUrl = window.URL.createObjectURL(blob);
-      previewRef.current.src = pdfUrl;
+      const url = getUrl();
+      setPreviewUrl(url);
     } catch {
       // error handled
     } finally {

@@ -1,16 +1,17 @@
 import { Button } from '@/components/Button';
 import React, { useState } from 'react'
-import { useHomeContext } from './HomeContext';
+import { useHomeContext } from '../HomeContext';
 import { Download } from 'lucide-react';
 
 export const DownloadPdfButton = () => {
-  const { downloadPdf } = useHomeContext();
+  const { downloadPdf, getUrl} = useHomeContext();
   const [loading, setLoading] = useState(false);
 
   const handleDownloadPdf = async () => {
     setLoading(true);
     try{
-      const { blob, url } = await downloadPdf();
+      const url = getUrl();
+      const blob = await downloadPdf(url);
       const pdfUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = pdfUrl;

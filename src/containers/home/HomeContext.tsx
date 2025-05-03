@@ -1,10 +1,12 @@
 import { createContext, RefObject, useContext } from "react";
 
 interface HomeContext {
-  downloadPdf: () => Promise<{url: string, blob: Blob;}>;
+  getUrl: () => string;
+  downloadPdf: (url: string) => Promise<Blob>;
   inputRef: RefObject<HTMLInputElement>;
-  previewRef: RefObject<HTMLIFrameElement>;
-  setHasPreviewed: (isPreview: boolean) => void;
+  setError: (error: string) => void;
+  previewUrl: string;
+  setPreviewUrl: (url: string) => void;
 }
 
 export const HomeContext = createContext<HomeContext>({} as HomeContext);

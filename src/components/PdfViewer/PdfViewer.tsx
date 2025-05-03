@@ -9,7 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 export function PDFViewer({ url }: {url: string}) {
   return (
-    <div className="overflow-auto rounded border shadow">
+    <div className="overflow-auto rounded border border-gray-200 shadow">
       <Document file={url}>
         <Page pageNumber={1}/>
       </Document>
