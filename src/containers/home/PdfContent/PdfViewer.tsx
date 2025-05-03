@@ -14,6 +14,9 @@ export const PdfViewer = () => {
   };
 
   useEffect(()=>{
+    if (!previewUrl) {
+      return;
+    }
     setLoading(true);
     downloadPdf(previewUrl).then(blob => {
       const pdfUrl = window.URL.createObjectURL(blob);

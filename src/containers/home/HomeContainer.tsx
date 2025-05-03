@@ -11,16 +11,16 @@ export const HomeContainer = () => {
   const [previewUrl, setPreviewUrl] = useState('');
   const inputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
 
-  const downloadedFile = {
+  const downloadedFile = useRef({
     url: '',
     blob: new Blob(),
-  }
+  });
 
   const getUrl = () => {
     setError('');
     
     // validate
-    const url = inputRef.current?.value.toString();
+    const url = inputRef.current?.value.toLowerCase();
     const { data, error } = z.string({ message: "url cannot be empty"}).url({message: "Invalid url"}).safeParse(url);
     if (error) {
       setError(error.issues[0].message);
@@ -31,17 +31,18 @@ export const HomeContainer = () => {
   }
 
   const downloadPdf = (url: string) => {
-    setError('');
+    console.log("downloadedFile", url === downloadedFile.current.url, downloadedFile)
     // if similar to prev url, return prev blob
-    if(url === downloadedFile.url) {
-      return Promise.resolve(downloadedFile.blob);
+    if(url === downloadedFile.current.url) {
+      return Promise.resolve(downloadedFile.current.blob);
     }
 
     // request pdf
     return getPdfBlob(url)
       .then( blob => {
-        downloadedFile.url = url;
-        downloadedFile.blob = blob;
+        downloadedFile.current.url = url;
+        downloadedFile.current.blob = blob;
+        console.log("downloadPdf download", downloadedFile);
         return blob;
       })
       .catch(err => {

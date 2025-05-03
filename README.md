@@ -44,6 +44,11 @@ bun dev
 ```
 Open http://localhost:3000 in your browser to view the application.
 
+## Preview
+
+![preview 1](screenshots/preview1.png)
+![preview 2](screenshots/preview2.png)
+
 ## Project Dependencies
 
 - Next.js  
