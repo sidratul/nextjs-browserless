@@ -19,6 +19,8 @@ BROWSERLESS_TOKEN=your_browserless_token_here
 
 First, install the dependencies:
 
+```bash
+
 npm install  
 # or  
 yarn  
@@ -27,8 +29,11 @@ pnpm install
 # or  
 bun install
 
+```
+
 Then, run the development server:
 
+```bash
 npm run dev  
 # or  
 yarn dev  
@@ -36,7 +41,7 @@ yarn dev
 pnpm dev  
 # or  
 bun dev
-
+```
 Open http://localhost:3000 in your browser to view the application.
 
 ## Project Dependencies
