@@ -1,17 +1,12 @@
 // import React from 'react'
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHomeContext } from '../HomeContext';
+import {PDFViewer } from '@/components/PdfViewer';
 
 export const PdfViewer = () => {
-  const previewRef = useRef<HTMLIFrameElement>({} as HTMLIFrameElement);
-  const { previewUrl, setError, downloadPdf, setPreviewUrl} = useHomeContext();
+  const { previewUrl, downloadPdf} = useHomeContext();
   const [loading, setLoading] = useState(false);
-  
-  const handleError = () => {
-    setLoading(false);
-    setPreviewUrl('');
-    setError("Error displaying PDF");
-  };
+  const [pdfUrl, setPdfUrl] = useState<string>();
 
   useEffect(()=>{
     if (!previewUrl) {
@@ -19,11 +14,13 @@ export const PdfViewer = () => {
     }
     setLoading(true);
     downloadPdf(previewUrl).then(blob => {
-      const pdfUrl = window.URL.createObjectURL(blob);
-      previewRef.current.src = pdfUrl;
+      const url = window.URL.createObjectURL(blob);
+      setPdfUrl(url);
     }).catch(()=>{
       //handled
-    });
+    }).finally(()=>{
+      setLoading(false)
+    })
   }, [previewUrl, downloadPdf]);
 
 
@@ -32,14 +29,15 @@ export const PdfViewer = () => {
       {loading && (
         <div className="flex animate-pulse space-x-4 h-[500px] bg-gray-200 rounded"></div>
       )}
-      
-      <iframe
-        ref={previewRef}
-        className={`w-full h-[500px] border rounded-lg ${(loading || !previewUrl) ? "hidden" : "block"}`}
-        title="PDF Viewer"
-        onError={handleError}
-        onLoad={() => setLoading(false)}
-      />
+
+      {pdfUrl && (
+        <div className='h-[500px] rounded overflow-auto border border-gray-200'>
+          <PDFViewer
+            url={pdfUrl!}
+            loading={loading}
+          />
+        </div>
+      )}
     </div>
   )
 }

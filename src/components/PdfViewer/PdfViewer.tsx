@@ -1,18 +1,26 @@
-import { pdfjs, Document, Page } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import { Viewer, ViewMode } from '@react-pdf-viewer/core';
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+// Import the styles
+import '@react-pdf-viewer/core/lib/styles/index.css';
 
-export function PDFViewer({ url }: {url: string}) {
+interface  PDFViewerProps {
+  url: string;
+  onLoad?: () => void;
+  loading?: boolean;
+}
+
+export function PDFViewer({
+  onLoad,
+  url,
+  loading,
+}: PDFViewerProps) {
   return (
-    <div className="overflow-auto rounded border border-gray-200 shadow">
-      <Document file={url}>
-        <Page pageNumber={1}/>
-      </Document>
+    <div className={`${(loading) ? "hidden" : "block"}`}>
+      <Viewer
+        viewMode={ViewMode.SinglePage}
+        fileUrl={url} 
+        onDocumentLoad={onLoad}
+      />
     </div>
   );
 }

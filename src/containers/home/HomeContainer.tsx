@@ -31,7 +31,6 @@ export const HomeContainer = () => {
   }
 
   const downloadPdf = (url: string) => {
-    console.log("downloadedFile", url === downloadedFile.current.url, downloadedFile)
     // if similar to prev url, return prev blob
     if(url === downloadedFile.current.url) {
       return Promise.resolve(downloadedFile.current.blob);
@@ -42,7 +41,6 @@ export const HomeContainer = () => {
       .then( blob => {
         downloadedFile.current.url = url;
         downloadedFile.current.blob = blob;
-        console.log("downloadPdf download", downloadedFile);
         return blob;
       })
       .catch(err => {
